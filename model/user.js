@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Username is required"],
         trim: true,
+        unique: true,
         minlength: 1,
         maxlength: 80,
     },
@@ -15,7 +16,5 @@ const userSchema = new mongoose.Schema({
         trim: true,
     },
 }, { timestamps: true });
-
-userSchema.index({ name: 1 });
 
 module.exports = mongoose.model('User', userSchema);

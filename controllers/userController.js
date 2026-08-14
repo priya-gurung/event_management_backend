@@ -1,7 +1,7 @@
 const User = require('../model/user.js')
 
 const getUser = async(req, res)=>{
-    const users = await User.find().sort({ createdAt: 1 });
+    const users = await User.find().sort({createdAt: 1});
     res.json(users);
 };
 
@@ -12,8 +12,18 @@ const createUser = async(req, res)=>{
         throw new Error('Profile name is required');
     }
 
+    const trimmedName = name.trim();
+    const existingUser = await User.findOne({
+        name: { $regex: new RegExp(`^${trimmedName}$`, 'i') },
+    });
+
+    if (existingUser) {
+        res.status(400);
+        throw new Error('A user with this name already exists');
+    }
+
     const user = await User.create({
-        name: name.trim(),
+        name: trimmedName,
         timezone: timezone || 'UTC',
     });
 
